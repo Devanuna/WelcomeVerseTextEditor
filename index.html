@@ -30,7 +30,6 @@
     .header-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
     .header-info { flex: 1; min-width: 0; }
     h1 { font-size: 22px; color: var(--text); }
-    .header-desc { font-size: 13px; color: #7f8c8d; }
     .header-status-bar {
       display: flex; align-items: center; justify-content: space-between;
       gap: 12px; padding: 10px 16px; border-radius: 8px;
@@ -53,7 +52,7 @@
     }
     button:hover:not(:disabled) { background: #219653; transform: translateY(-1px); }
     button:disabled { background: #95a5a6; cursor: not-allowed; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 20px 30px 40px; }
+    .container { max-width: 1200px; margin: 0 auto; padding-top: 20px; padding-left: 30px; padding-right: 30px; }
     table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px;
       overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.1); margin-top: 20px; }
     th, td { border: 1px solid var(--border); text-align: left; vertical-align: top; }
@@ -99,7 +98,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     #loadingText { font-size: 16px; font-weight: 500; color: var(--text); }
 
-    footer { text-align: center; margin-top: 60px; color: #7f8c8d; font-size: 14px; padding: 20px 0; }
+    footer { text-align: center; color: #7f8c8d; font-size: 14px; padding: 20px 0; }
   </style>
 </head>
 <body>
@@ -117,7 +116,6 @@
       <div class="header-top">
         <div class="header-info">
           <h1>WelcomeVerse Text Editor</h1>
-          <p class="header-desc">Edit <strong>Mongolian (mn)</strong> & <strong>English (en)</strong></p>
         </div>
       </div>
       <div class="header-status-bar" id="statusBar">
