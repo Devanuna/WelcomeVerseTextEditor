@@ -21,100 +21,43 @@
       background: var(--bg); color: var(--text); line-height: 1.6;
       padding-top: 120px;
     }
-    .header {
-      position: fixed; top: 0; left: 0; right: 0;
-      background: #fff; z-index: 999; box-shadow: 0 2px 10px rgba(0,0,0,.1);
-      padding: 15px 30px;
-    }
-    .header-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
-    .header-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-    .header-info { flex: 1; min-width: 0; }
-    h1 { font-size: 22px; color: var(--text); }
 
-    /* Combined status bar */
-    .header-status-bar {
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between;
-      gap: 12px; 
-      padding: 10px 16px; 
-      border-radius: 8px;
-      font: 500 14px/1 'Segoe UI'; 
-      transition: all .2s;
-      background: #f8f9fa; 
-      border: 1px solid #e9ecef;
-      min-height: 44px;
-    }
-    #statusMessage {
-      flex: 1;
-      text-align: left;
-      font-weight: 500;
-      color: #5d6d7e;
-    }
-    .header-status-bar.has-changes #statusMessage {
-      color: var(--warning);
-      font-weight: bold;
-    }
-    .header-status-bar.success #statusMessage { color: var(--success); }
-    .header-status-bar.error #statusMessage { color: var(--danger); }
+    /* Header */
+    .header { position: fixed; top:0; left:0; right:0; background:#fff; z-index:999; box-shadow:0 2px 10px rgba(0,0,0,.1); padding:10px 30px; }
+    .header-top { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:44px; }
+    .header-top h1 { margin-right:auto; font-size:22px; }
+    #statusMessage { flex:1; text-align:center; font-weight:500; color:#5d6d7e; }
+    button { background: var(--success); color:#fff; border:none; padding:8px 18px; font:bold 14px/1 'Segoe UI'; border-radius:6px; cursor:pointer; transition:all .2s; white-space:nowrap; }
+    button:disabled { background:#95a5a6; cursor:not-allowed; }
+    button:hover:not(:disabled) { background:#219653; transform:translateY(-1px); }
 
-    button {
-      background: var(--success); color: #fff; border: none; padding: 8px 18px;
-      font: bold 14px/1 'Segoe UI'; border-radius: 6px; cursor: pointer;
-      transition: all .2s; white-space: nowrap;
-    }
-    button:hover:not(:disabled) { background: #219653; transform: translateY(-1px); }
-    button:disabled { background: #95a5a6; cursor: not-allowed; }
+    .header-top.has-changes #statusMessage { color: var(--warning); font-weight:bold; }
+    .header-top.success #statusMessage { color: var(--success); }
+    .header-top.error #statusMessage { color: var(--danger); }
 
-    .container { max-width: 1200px; margin: 0 auto; padding-top: 20px; padding-left: 30px; padding-right: 30px; }
-    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px;
-      overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.1); margin-top: 20px; }
-    th, td { border: 1px solid var(--border); text-align: left; vertical-align: top; }
-    th { background: var(--accent); color: #fff; font-weight: 600; position: sticky; z-index: 100; font-size: 14px; padding: 12px; }
-    .key { background: #ecf0f1; font-weight: bold; width: 250px; font-size: 13px; padding: 12px; vertical-align: middle; }
-    .text-cell {
-      padding: 10px; min-height: 50px; font-size: 15px; line-height: 1.5;
-      white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere;
-      background: transparent; outline: none; border: none; display: block;
-    }
-    .text-cell:focus { outline: 2px solid var(--accent); border-radius: 4px; background: #fff; }
+    /* Table */
+    .container { max-width:1200px; margin:0 auto; padding:20px 30px; }
+    table { width:100%; border-collapse:collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.1); margin-top:20px; }
+    th, td { border:1px solid var(--border); text-align:left; vertical-align:top; }
+    th { background:var(--accent); color:#fff; font-weight:600; position:sticky; z-index:100; font-size:14px; padding:12px; }
+    .key { background:#ecf0f1; font-weight:bold; width:250px; font-size:13px; padding:12px; vertical-align:middle; }
+    .text-cell { padding:10px; min-height:50px; font-size:15px; line-height:1.5; white-space:pre-wrap; word-wrap:break-word; overflow-wrap:anywhere; background:transparent; outline:none; border:none; display:block; }
+    .text-cell:focus { outline:2px solid var(--accent); border-radius:4px; background:#fff; }
     .text-cell.changed { background: var(--changed) !important; }
 
     /* Loading Overlay */
-    .loading-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-    }
-    .loading-overlay.active { display: flex; }
-    .loading-content {
-      background: #fff;
-      padding: 30px 40px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      min-width: 200px;
-    }
-    .spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid var(--accent);
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 15px;
-    }
+    .loading-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; }
+    .loading-overlay.active { display:flex; }
+    .loading-content { background:#fff; padding:30px 40px; border-radius:12px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.2); min-width:200px; }
+    .spinner { border:4px solid #f3f3f3; border-top:4px solid var(--accent); border-radius:50%; width:50px; height:50px; animation:spin 1s linear infinite; margin:0 auto 15px; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    #loadingText { font-size: 16px; font-weight: 500; color: var(--text); }
+    #loadingText { font-size:16px; font-weight:500; color:var(--text); }
 
-    footer { text-align: center; color: #7f8c8d; font-size: 14px; padding: 20px 0; }
+    footer { text-align:center; color:#7f8c8d; font-size:14px; padding:20px 0; }
   </style>
 </head>
 <body>
+
   <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-content">
@@ -127,11 +70,7 @@
   <div class="header">
     <div class="header-content">
       <div class="header-top">
-        <div class="header-info">
-          <h1>WelcomeVerse Text Editor</h1>
-        </div>
-      </div>
-      <div class="header-status-bar" id="statusBar">
+        <h1>WelcomeVerse Text Editor</h1>
         <div id="statusMessage">Өөрчлөлтгүй</div>
         <button id="saveBtn" disabled>Хадгалах</button>
       </div>
@@ -153,7 +92,7 @@
   <script>
     const JSON_URL = `/Culture.json?t=${Date.now()}`;
     const tbody = document.querySelector('#table tbody');
-    const statusBar = document.getElementById('statusBar');
+    const statusBar = document.querySelector('.header-top');
     const statusMessage = document.getElementById('statusMessage');
     const saveBtn = document.getElementById('saveBtn');
     const overlay = document.getElementById('loadingOverlay');
@@ -164,7 +103,7 @@
       const baseMsg = count ? `${count} өөрчлөлт` : 'Өөрчлөлтгүй';
       statusMessage.textContent = msg || baseMsg;
 
-      statusBar.className = 'header-status-bar';
+      statusBar.className = 'header-top';
       if (count > 0) statusBar.classList.add('has-changes');
       if (type) statusBar.classList.add(type);
 
@@ -221,46 +160,40 @@
           const json = await res.json();
           let ok = 0;
           for (const id of changed) {
-            const [k, l] = id.split('-');
+            const [k,l] = id.split('-');
             const item = json.find(j => j.Name === k);
-            if (item?.[l] === current[k][l]) ok++;
+            if(item?.[l] === current[k][l]) ok++;
           }
-          if (ok >= changed.size * 0.5) return true;
+          if(ok >= changed.size*0.5) return true;
         } catch {}
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r=>setTimeout(r,1000));
       }
       return false;
     };
 
     const save = async () => {
-      if (!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
-      
+      if(!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
       saveBtn.disabled = true;
       overlay.classList.add('active');
       document.getElementById('loadingText').textContent = 'Шинэчилж байна…';
-      
       try {
-        const payload = Object.keys(current).map(k => ({
-          Name: k, mn: current[k].mn, en: current[k].en
-        }));
-
-        const res = await fetch('/api/updateText', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: JSON.stringify(payload, null, 2), changesCount: changed.size })
+        const payload = Object.keys(current).map(k=>({Name:k,mn:current[k].mn,en:current[k].en}));
+        const res = await fetch('/api/updateText',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ content: JSON.stringify(payload,null,2), changesCount: changed.size })
         });
-        if (!res.ok) throw new Error((await res.json()).message || 'Failed');
+        if(!res.ok) throw new Error((await res.json()).message || 'Failed');
 
         const deployed = await waitDeploy();
-
         document.getElementById('loadingText').textContent = 'Амжилттай!';
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r=>setTimeout(r,1000));
 
         Object.assign(original, JSON.parse(JSON.stringify(current)));
         changed.clear();
-        document.querySelectorAll('.text-cell.changed').forEach(el => el.classList.remove('changed'));
+        document.querySelectorAll('.text-cell.changed').forEach(el=>el.classList.remove('changed'));
         updateStatus('Амжилттай хадгаллаа!', 'success');
-      } catch (e) {
+      } catch(e){
         updateStatus(`Error: ${e.message}`, 'error');
       } finally {
         overlay.classList.remove('active');
