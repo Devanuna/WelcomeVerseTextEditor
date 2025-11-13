@@ -1,14 +1,11 @@
 // api/updateText.js
-export default async function handler(request, response) {
+module.exports = async function handler(request, response) {
   if (request.method !== 'POST') {
     response.status(405).json({ message: 'Method not allowed' });
     return;
   }
 
   try {
-    // Safe JSON parsing with Vercel's request.body helper
-    let body;
-    
     const body = request.body || {};
     const { content, changesCount } = body;
 
@@ -64,4 +61,4 @@ export default async function handler(request, response) {
     console.error('UpdateText error:', error.message);
     response.status(500).json({ message: error.message });
   }
-}
+};
