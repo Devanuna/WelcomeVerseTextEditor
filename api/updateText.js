@@ -1,11 +1,23 @@
 // api/updateText.js
 export default async function handler(request, response) {
   if (request.method !== 'POST') {
-    return response.status(405).json({ message: 'Method not allowed' });
+    response.status(405).json({ message: 'Method not allowed' });
+    return;
   }
 
   try {
-    const { content, changesCount } = await request.json(); // Correct Vercel syntax
+    // Safe JSON parsing with Vercel's request.body helper
+    let body;
+    try {
+      body = request.body ? JSON.parse(request.body) : {};
+    } catch (parseErr) {
+      throw new Error('Invalid JSON body');
+    }
+    const { content, changesCount } = body;
+
+    if (!content) {
+      throw new Error('Missing content in request');
+    }
 
     const repoOwner = 'Devanuna';
     const repoName = 'WelcomeVerseTextEditor';
@@ -21,7 +33,7 @@ export default async function handler(request, response) {
       },
     });
     const getData = await getRes.json();
-    if (!getRes.ok) throw new Error(JSON.stringify(getData));
+    if (!getRes.ok) throw new Error(`GitHub fetch failed: ${getData.message || 'Unknown error'}`);
     const sha = getData.sha;
 
     // Update file
@@ -44,22 +56,15 @@ export default async function handler(request, response) {
     });
 
     const updateData = await updateRes.json();
-    if (!updateRes.ok) throw new Error(JSON.stringify(updateData));
+    if (!updateRes.ok) throw new Error(`GitHub update failed: ${updateData.message || 'Unknown error'}`);
 
-    return response.status(200).json({
+    response.status(200).json({
       message: `Амжилттай шинэчиллээ! ${changesCount || ''} өөрчлөлт`,
       changesApplied: changesCount || 0,
       commitSha: updateData.commit.sha,
     });
   } catch (error) {
-    console.error('Function error:', error);
-    return response.status(500).json({ message: error.message });
+    console.error('UpdateText error:', error.message);
+    response.status(500).json({ message: error.message });
   }
 }
-
-// Configure for Vercel runtime
-export const config = {
-  api: {
-    bodyParser: false, // Manual JSON parsing
-  },
-};
