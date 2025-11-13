@@ -105,8 +105,7 @@ table {
     box-shadow: 0 4px 20px rgba(0, 0, 0, .1);
 }
 
-th,
-td {
+th,td {
     border: 1px solid var(--border);
     text-align: left;
     vertical-align: top;
