@@ -30,21 +30,35 @@
     .header-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
     .header-info { flex: 1; min-width: 0; }
     h1 { font-size: 22px; color: var(--text); }
+    .header-desc { font-size: 13px; color: #7f8c8d; }
+
+    /* Combined status bar */
     .header-status-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; padding: 10px 16px; border-radius: 8px;
-      font: 500 14px/1 'Segoe UI'; transition: all .2s;
-      background: #f8f9fa; border: 1px solid #e9ecef;
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      gap: 12px; 
+      padding: 10px 16px; 
+      border-radius: 8px;
+      font: 500 14px/1 'Segoe UI'; 
+      transition: all .2s;
+      background: #f8f9fa; 
+      border: 1px solid #e9ecef;
       min-height: 44px;
     }
-    .header-status-bar.has-changes { background: #fff8e1; border-color: #ffe58f; }
-    .header-status-bar.success { background: #d5f5e3; border-color: #b7eb8f; }
-    .header-status-bar.error { background: #fadbd8; border-color: #fea8a1; }
-    .status-left { display: flex; align-items: center; gap: 8px; }
-    #changesInfo { color: #5d6d7e; white-space: nowrap; }
-    #changesInfo.has-changes { color: var(--warning); font-weight: bold; }
-    .status-center { flex: 1; text-align: center; font-weight: 500; }
-    .status-center:empty { display: none; }
+    #statusMessage {
+      flex: 1;
+      text-align: left;
+      font-weight: 500;
+      color: #5d6d7e;
+    }
+    .header-status-bar.has-changes #statusMessage {
+      color: var(--warning);
+      font-weight: bold;
+    }
+    .header-status-bar.success #statusMessage { color: var(--success); }
+    .header-status-bar.error #statusMessage { color: var(--danger); }
+
     button {
       background: var(--success); color: #fff; border: none; padding: 8px 18px;
       font: bold 14px/1 'Segoe UI'; border-radius: 6px; cursor: pointer;
@@ -52,13 +66,13 @@
     }
     button:hover:not(:disabled) { background: #219653; transform: translateY(-1px); }
     button:disabled { background: #95a5a6; cursor: not-allowed; }
-    .container { max-width: 1200px; margin: 0 auto; padding-top: 20px; padding-left: 30px; padding-right: 30px; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px 30px 40px; }
     table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px;
       overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.1); margin-top: 20px; }
     th, td { border: 1px solid var(--border); text-align: left; vertical-align: top; }
     th { background: var(--accent); color: #fff; font-weight: 600; position: sticky; z-index: 100; font-size: 14px; padding: 12px; }
-    .key { background: #ecf0f1; font-weight: bold; width: 250px; font-size: 13px;
-      padding: 12px; vertical-align: middle; }
+    .key { background: #ecf0f1; font-weight: bold; width: 250px; font-size: 13px; padding: 12px; vertical-align: middle; }
     .text-cell {
       padding: 10px; min-height: 50px; font-size: 15px; line-height: 1.5;
       white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere;
@@ -67,7 +81,7 @@
     .text-cell:focus { outline: 2px solid var(--accent); border-radius: 4px; background: #fff; }
     .text-cell.changed { background: var(--changed) !important; }
 
-    /* Simplified Loading Overlay */
+    /* Loading Overlay */
     .loading-overlay {
       display: none;
       position: fixed;
@@ -98,7 +112,7 @@
     @keyframes spin { to { transform: rotate(360deg); } }
     #loadingText { font-size: 16px; font-weight: 500; color: var(--text); }
 
-    footer { text-align: center; color: #7f8c8d; font-size: 14px; padding: 20px 0; }
+    footer { text-align: center; margin-top: 60px; color: #7f8c8d; font-size: 14px; padding: 20px 0; }
   </style>
 </head>
 <body>
@@ -116,13 +130,11 @@
       <div class="header-top">
         <div class="header-info">
           <h1>WelcomeVerse Text Editor</h1>
+          <p class="header-desc">Edit <strong>Mongolian (mn)</strong> & <strong>English (en)</strong></p>
         </div>
       </div>
       <div class="header-status-bar" id="statusBar">
-        <div class="status-left">
-          <span id="changesInfo">Өөрчлөлтгүй</span>
-        </div>
-        <div class="status-center" id="statusMessage"></div>
+        <div id="statusMessage">Өөрчлөлтгүй</div>
         <button id="saveBtn" disabled>Хадгалах</button>
       </div>
     </div>
@@ -144,7 +156,6 @@
     const JSON_URL = `/Culture.json?t=${Date.now()}`;
     const tbody = document.querySelector('#table tbody');
     const statusBar = document.getElementById('statusBar');
-    const changesInfo = document.getElementById('changesInfo');
     const statusMessage = document.getElementById('statusMessage');
     const saveBtn = document.getElementById('saveBtn');
     const overlay = document.getElementById('loadingOverlay');
@@ -152,14 +163,14 @@
 
     const updateStatus = (msg = '', type = '') => {
       const count = changed.size;
-      changesInfo.textContent = count ? `${count} өөрчлөлт` : 'Өөрчлөлтгүй';
-      changesInfo.classList.toggle('has-changes', count > 0);
-      saveBtn.disabled = count === 0;
-      statusMessage.textContent = msg;
-      statusMessage.className = 'status-center';
+      const baseMsg = count ? `${count} өөрчлөлт` : 'Өөрчлөлтгүй';
+      statusMessage.textContent = msg || baseMsg;
+
       statusBar.className = 'header-status-bar';
       if (count > 0) statusBar.classList.add('has-changes');
       if (type) statusBar.classList.add(type);
+
+      saveBtn.disabled = count === 0;
     };
 
     const mark = (key, lang, el) => {
@@ -235,7 +246,6 @@
           Name: k, mn: current[k].mn, en: current[k].en
         }));
 
-        // Update GitHub
         const res = await fetch('/api/updateText', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -243,10 +253,8 @@
         });
         if (!res.ok) throw new Error((await res.json()).message || 'Failed');
 
-        // Wait for Vercel deploy
         const deployed = await waitDeploy();
 
-        // Show success briefly
         document.getElementById('loadingText').textContent = 'Амжилттай!';
         await new Promise(r => setTimeout(r, 1000));
 
