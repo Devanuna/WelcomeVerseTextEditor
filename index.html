@@ -6,8 +6,14 @@
   <title>WelcomeVerse Text Editor</title>
   <style>
     :root {
-      --bg: #f5f7fa; --text: #2c3e50; --accent: #3498db; --success: #27ae60;
-      --warning: #e67e22; --danger: #e74c3c; --changed: #fff3cd; --border: #ddd;
+      --bg: #f5f7fa; 
+      --text: #2c3e50; 
+      --accent: #3498db; 
+      --success: #27ae60;
+      --warning: #e67e22; 
+      --danger: #e74c3c; 
+      --changed: #fff3cd; 
+      --border: #ddd;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -35,8 +41,6 @@
     .header-status-bar.has-changes { background: #fff8e1; border-color: #ffe58f; }
     .header-status-bar.success { background: #d5f5e3; border-color: #b7eb8f; }
     .header-status-bar.error { background: #fadbd8; border-color: #fea8a1; }
-    .header-status-bar.loading { background: #fef9e7; border-color: #ffe58f; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .8; } }
     .status-left { display: flex; align-items: center; gap: 8px; }
     #changesInfo { color: #5d6d7e; white-space: nowrap; }
     #changesInfo.has-changes { color: var(--warning); font-weight: bold; }
@@ -63,34 +67,51 @@
     }
     .text-cell:focus { outline: 2px solid var(--accent); border-radius: 4px; background: #fff; }
     .text-cell.changed { background: var(--changed) !important; }
+
+    /* Simplified Loading Overlay */
     .loading-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7);
-      z-index: 1000; justify-content: center; align-items: center;
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
     }
     .loading-overlay.active { display: flex; }
-    .loading-content { background: #fff; padding: 40px; border-radius: 12px; text-align: center;
-      max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
-    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--accent);
-      border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;
-      margin: 0 auto 20px; }
+    .loading-content {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      min-width: 200px;
+    }
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid var(--accent);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
+    #loadingText { font-size: 16px; font-weight: 500; color: var(--text); }
+
     footer { text-align: center; margin-top: 60px; color: #7f8c8d; font-size: 14px; padding: 20px 0; }
   </style>
 </head>
 <body>
+  <!-- Loading Overlay -->
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-content">
       <div class="spinner"></div>
-      <div id="loadingText">Хадгалж байна...</div>
-      <div id="loadingSubtext">Түр хүлээнэ үү</div>
-      <div class="progress-steps">
-        <div class="progress-step" id="step1">Бэлдэж байна</div>
-        <div class="progress-step" id="step2">GitHub руу</div>
-        <div class="progress-step" id="step3">Vercel</div>
-        <div class="progress-step" id="step4">Дууслаа</div>
-      </div>
+      <div id="loadingText">Шинэчилж байна…</div>
     </div>
   </div>
+
+  <!-- Header -->
   <div class="header">
     <div class="header-content">
       <div class="header-top">
@@ -108,6 +129,8 @@
       </div>
     </div>
   </div>
+
+  <!-- Table -->
   <div class="container">
     <table id="table">
       <thead>
@@ -116,7 +139,9 @@
       <tbody></tbody>
     </table>
   </div>
+
   <footer>WelcomeVerse VR • App дээр шинэчлэл хараарай</footer>
+
   <script>
     const JSON_URL = `/Culture.json?t=${Date.now()}`;
     const tbody = document.querySelector('#table tbody');
@@ -181,13 +206,6 @@
       }
     };
 
-    const step = n => {
-      for (let i = 1; i <= 4; i++) {
-        const el = document.getElementById(`step${i}`);
-        el.className = i < n ? 'progress-step complete' : i === n ? 'progress-step active' : 'progress-step';
-      }
-    };
-
     const waitDeploy = async () => {
       for (let i = 0; i < 20; i++) {
         try {
@@ -209,31 +227,31 @@
 
     const save = async () => {
       if (!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
+      
       saveBtn.disabled = true;
       overlay.classList.add('active');
-      step(1);
-      document.getElementById('loadingText').textContent = 'Бэлдэж байна...';
-      document.getElementById('loadingSubtext').textContent = `${changed.size} өөрчлөлт`;
+      document.getElementById('loadingText').textContent = 'Шинэчилж байна…';
+      
       try {
-        await new Promise(r => setTimeout(r, 500));
         const payload = Object.keys(current).map(k => ({
           Name: k, mn: current[k].mn, en: current[k].en
         }));
-        step(2);
-        document.getElementById('loadingText').textContent = 'GitHub...';
+
+        // Update GitHub
         const res = await fetch('/api/updateText', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content: JSON.stringify(payload, null, 2), changesCount: changed.size })
         });
         if (!res.ok) throw new Error((await res.json()).message || 'Failed');
-        step(3);
-        document.getElementById('loadingText').textContent = 'Vercel...';
-        const done = await waitDeploy();
-        step(4);
-        document.getElementById('loadingText').textContent = done ? 'Амжилттай!' : 'GitHub OK';
-        document.getElementById('loadingSubtext').textContent = done ? 'Бүгд бэлэн' : 'Vercel 1-2 мин';
-        await new Promise(r => setTimeout(r, 2000));
+
+        // Wait for Vercel deploy
+        const deployed = await waitDeploy();
+
+        // Show success briefly
+        document.getElementById('loadingText').textContent = 'Амжилттай!';
+        await new Promise(r => setTimeout(r, 1000));
+
         Object.assign(original, JSON.parse(JSON.stringify(current)));
         changed.clear();
         document.querySelectorAll('.text-cell.changed').forEach(el => el.classList.remove('changed'));
