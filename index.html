@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WelcomeVerse Text Editor</title>
+  <link rel="preload" href="/Culture.json" as="fetch" crossorigin>
+  <style>
+    :root {
+      --bg: #f5f7fa; --text: #2c3e50; --accent: #3498db; --success: #27ae60;
+      --warning: #e67e22; --danger: #e74c3c; --changed: #fff3cd; --border: #ddd;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+      padding-top: 120px;
+    }
+    .header {
+      position: fixed; top: 0; left: 0; right: 0;
+      background: #fff; z-index: 999; box-shadow: 0 2px 10px rgba(0,0,0,.1);
+      padding: 15px 30px;
+    }
+    .header-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
+    .header-top { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .header-info { flex: 1; min-width: 0; }
+    h1 { font-size: 22px; color: var(--text); }
+    .header-desc { font-size: 13px; color: #7f8c8d; }
+    .header-status-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 10px 16px; border-radius: 8px;
+      font: 500 14px/1 'Segoe UI'; transition: all .2s;
+      background: #f8f9fa; border: 1px solid #e9ecef;
+      min-height: 44px;
+    }
+    .header-status-bar.has-changes { background: #fff8e1; border-color: #ffe58f; }
+    .header-status-bar.success { background: #d5f5e3; border-color: #b7eb8f; }
+    .header-status-bar.error { background: #fadbd8; border-color: #fea8a1; }
+    .header-status-bar.loading { background: #fef9e7; border-color: #ffe58f; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .8; } }
+    .status-left { display: flex; align-items: center; gap: 8px; }
+    #changesInfo { color: #5d6d7e; white-space: nowrap; }
+    #changesInfo.has-changes { color: var(--warning); font-weight: bold; }
+    .status-center { flex: 1; text-align: center; font-weight: 500; }
+    .status-center:empty { display: none; }
+    button {
+      background: var(--success); color: #fff; border: none; padding: 8px 18px;
+      font: bold 14px/1 'Segoe UI'; border-radius: 6px; cursor: pointer;
+      transition: all .2s; white-space: nowrap;
+    }
+    button:hover:not(:disabled) { background: #219653; transform: translateY(-1px); }
+    button:disabled { background: #95a5a6; cursor: not-allowed; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px 30px 40px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 12px;
+      overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.1); margin-top: 20px; }
+    th, td { border: 1px solid var(--border); text-align: left; vertical-align: top; }
+    th { background: var(--accent); color: #fff; font-weight: 600; position: sticky; z-index: 100; font-size: 14px; padding: 12px; }
+    .key { background: #ecf0f1; font-weight: bold; width: 250px; font-size: 13px;
+      padding: 12px; vertical-align: middle; }
+    .text-cell {
+      padding: 10px; min-height: 50px; font-size: 15px; line-height: 1.5;
+      white-space: pre-wrap; word-wrap: break-word; overflow-wrap: anywhere;
+      background: transparent; outline: none; border: none; display: block;
+    }
+    .text-cell:focus { outline: 2px solid var(--accent); border-radius: 4px; background: #fff; }
+    .text-cell.changed { background: var(--changed) !important; }
+    .loading-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.7);
+      z-index: 1000; justify-content: center; align-items: center;
+    }
+    .loading-overlay.active { display: flex; }
+    .loading-content { background: #fff; padding: 40px; border-radius: 12px; text-align: center;
+      max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,.2); }
+    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--accent);
+      border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;
+      margin: 0 auto 20px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    footer { text-align: center; margin-top: 60px; color: #7f8c8d; font-size: 14px; padding: 20px 0; }
+  </style>
+</head>
+<body>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div id="loadingText">Хадгалж байна...</div>
+      <div id="loadingSubtext">Түр хүлээнэ үү</div>
+      <div class="progress-steps">
+        <div class="progress-step" id="step1">Бэлдэж байна</div>
+        <div class="progress-step" id="step2">GitHub руу</div>
+        <div class="progress-step" id="step3">Vercel</div>
+        <div class="progress-step" id="step4">Дууслаа</div>
+      </div>
+    </div>
+  </div>
+  <div class="header">
+    <div class="header-content">
+      <div class="header-top">
+        <div class="header-info">
+          <h1>WelcomeVerse Text Editor</h1>
+          <p class="header-desc">Edit <strong>Mongolian (mn)</strong> & <strong>English (en)</strong></p>
+        </div>
+      </div>
+      <div class="header-status-bar" id="statusBar">
+        <div class="status-left">
+          <span id="changesInfo">Өөрчлөлтгүй</span>
+        </div>
+        <div class="status-center" id="statusMessage"></div>
+        <button id="saveBtn" disabled>Хадгалах</button>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <table id="table">
+      <thead>
+        <tr><th>Key</th><th>Монгол</th><th>English</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <footer>WelcomeVerse VR • App дээр шинэчлэл хараарай</footer>
+  <script>
+    const JSON_URL = `/Culture.json?t=${Date.now()}`;
+    const tbody = document.querySelector('#table tbody');
+    const statusBar = document.getElementById('statusBar');
+    const changesInfo = document.getElementById('changesInfo');
+    const statusMessage = document.getElementById('statusMessage');
+    const saveBtn = document.getElementById('saveBtn');
+    const overlay = document.getElementById('loadingOverlay');
+    let original = {}, current = {}, changed = new Set();
+
+    const updateStatus = (msg = '', type = '') => {
+      const count = changed.size;
+      changesInfo.textContent = count ? `${count} өөрчлөлт` : 'Өөрчлөлтгүй';
+      changesInfo.classList.toggle('has-changes', count > 0);
+      saveBtn.disabled = count === 0;
+      statusMessage.textContent = msg;
+      statusMessage.className = 'status-center';
+      statusBar.className = 'header-status-bar';
+      if (count > 0) statusBar.classList.add('has-changes');
+      if (type) statusBar.classList.add(type);
+    };
+
+    const mark = (key, lang, el) => {
+      const id = `${key}-${lang}`;
+      if (original[key][lang] !== current[key][lang]) {
+        changed.add(id); el.classList.add('changed');
+      } else {
+        changed.delete(id); el.classList.remove('changed');
+      }
+      updateStatus();
+    };
+
+    const load = async () => {
+      updateStatus('Loading JSON...', 'loading');
+      try {
+        const res = await fetch(JSON_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        tbody.innerHTML = '';
+        data.forEach(item => {
+          const k = item.Name;
+          original[k] = { mn: item.mn || '', en: item.en || '' };
+          current[k] = { ...original[k] };
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td class="key">${k}</td>
+            <td><div class="text-cell" contenteditable data-key="${k}" data-lang="mn">${current[k].mn}</div></td>
+            <td><div class="text-cell" contenteditable data-key="${k}" data-lang="en">${current[k].en}</div></td>
+          `;
+          tbody.appendChild(tr);
+        });
+        document.querySelectorAll('.text-cell').forEach(el => {
+          el.addEventListener('input', e => {
+            const { key, lang } = e.target.dataset;
+            current[key][lang] = e.target.innerText;
+            mark(key, lang, e.target);
+          });
+        });
+        updateStatus('Бэлэн', 'success');
+      } catch (e) {
+        updateStatus(`Error: ${e.message}`, 'error');
+      }
+    };
+
+    const step = n => {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById(`step${i}`);
+        el.className = i < n ? 'progress-step complete' : i === n ? 'progress-step active' : 'progress-step';
+      }
+    };
+
+    const waitDeploy = async () => {
+      for (let i = 0; i < 20; i++) {
+        try {
+          const res = await fetch(`/Culture.json?t=${Date.now()}`, { cache: 'no-store' });
+          if (!res.ok) continue;
+          const json = await res.json();
+          let ok = 0;
+          for (const id of changed) {
+            const [k, l] = id.split('-');
+            const item = json.find(j => j.Name === k);
+            if (item?.[l] === current[k][l]) ok++;
+          }
+          if (ok >= changed.size * 0.5) return true;
+        } catch {}
+        await new Promise(r => setTimeout(r, 1000));
+      }
+      return false;
+    };
+
+    const save = async () => {
+      if (!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
+      saveBtn.disabled = true;
+      overlay.classList.add('active');
+      step(1);
+      document.getElementById('loadingText').textContent = 'Бэлдэж байна...';
+      document.getElementById('loadingSubtext').textContent = `${changed.size} өөрчлөлт`;
+      try {
+        await new Promise(r => setTimeout(r, 500));
+        const payload = Object.keys(current).map(k => ({
+          Name: k, mn: current[k].mn, en: current[k].en
+        }));
+        step(2);
+        document.getElementById('loadingText').textContent = 'GitHub...';
+        const res = await fetch('/api/updateText', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content: JSON.stringify(payload, null, 2), changesCount: changed.size })
+        });
+        if (!res.ok) throw new Error((await res.json()).message || 'Failed');
+        step(3);
+        document.getElementById('loadingText').textContent = 'Vercel...';
+        const done = await waitDeploy();
+        step(4);
+        document.getElementById('loadingText').textContent = done ? 'Амжилттай!' : 'GitHub OK';
+        document.getElementById('loadingSubtext').textContent = done ? 'Бүгд бэлэн' : 'Vercel 1-2 мин';
+        await new Promise(r => setTimeout(r, 2000));
+        Object.assign(original, JSON.parse(JSON.stringify(current)));
+        changed.clear();
+        document.querySelectorAll('.text-cell.changed').forEach(el => el.classList.remove('changed'));
+        updateStatus('Амжилттай хадгаллаа!', 'success');
+      } catch (e) {
+        updateStatus(`Error: ${e.message}`, 'error');
+      } finally {
+        overlay.classList.remove('active');
+        saveBtn.disabled = false;
+      }
+    };
+
+    saveBtn.onclick = save;
+    load();
+  </script>
+</body>
+</html>
