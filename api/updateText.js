@@ -1,4 +1,3 @@
-// api/updateText.js
 module.exports = async function handler(request, response) {
   if (request.method !== 'POST') {
     response.status(405).json({ message: 'Method not allowed' });
