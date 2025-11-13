@@ -8,11 +8,8 @@ export default async function handler(request, response) {
   try {
     // Safe JSON parsing with Vercel's request.body helper
     let body;
-    try {
-      body = request.body ? JSON.parse(request.body) : {};
-    } catch (parseErr) {
-      throw new Error('Invalid JSON body');
-    }
+    
+    const body = request.body || {};
     const { content, changesCount } = body;
 
     if (!content) {
