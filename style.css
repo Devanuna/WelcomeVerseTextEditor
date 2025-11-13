@@ -113,7 +113,6 @@ th,td {
 
 th {
     background: var(--accent);
-    color: #fff;
     font-weight: 600;
     position: sticky;
     z-index: 100;
