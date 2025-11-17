@@ -1,29 +1,31 @@
 import { Redis } from '@upstash/redis';
-import { NextResponse } from 'next/server';
 
-// Initialize Redis from environment variables
 const redis = Redis.fromEnv();
 
-export const GET = async () => {
-  try {
-    const data = await redis.get('culture');
-    return NextResponse.json(data || []);
-  } catch (err) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    try {
+      const data = await redis.get('culture');
+      res.status(200).json(data || []);
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  } else if (req.method === 'POST') {
+    try {
+      const body = await new Promise((resolve) => {
+        let data = '';
+        req.on('data', chunk => data += chunk);
+        req.on('end', () => resolve(JSON.parse(data)));
+      });
+
+      if (!body.content) throw new Error('No content provided');
+
+      await redis.set('culture', JSON.parse(body.content));
+      res.status(200).json({ success: true });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  } else {
+    res.status(405).json({ error: 'Method not allowed' });
   }
-};
-
-export const POST = async (req) => {
-  try {
-    const body = await req.json();
-    const content = body.content; // JSON string from frontend
-
-    if (!content) throw new Error('No content provided');
-
-    await redis.set('culture', JSON.parse(content));
-
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
-  }
-};
+}
