@@ -8,10 +8,10 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       if (req.query.type === 'hash') {
         const hash = await redis.get('culture:hash');
-        return res.status(200).json({ hash });
+        return res.status(200).json({ hash: hash || '' });
       } else {
         const data = await redis.get('culture');
-        return res.status(200).json(data || []);
+        return res.status(200).json(data ? JSON.parse(data) : []);
       }
     } else if (req.method === 'POST') {
       const body = await new Promise(resolve => {
