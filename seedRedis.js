@@ -1,19 +1,31 @@
+// Load environment variables from .env
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { Redis } from '@upstash/redis';
 import fs from 'fs';
+import path from 'path';
 
-// Initialize Redis from your environment variable
+// Initialize Redis from environment
 const redis = Redis.fromEnv();
 
-// Read your culture.json
-const data = JSON.parse(fs.readFileSync('./culture.json', 'utf-8'));
+// Path to your culture.json
+const cultureFile = path.join(process.cwd(), 'Culture.json');
 
-// Push each entry into Redis
 async function seed() {
-  for (const item of data) {
-    await redis.set(item.Name, JSON.stringify(item));
-    console.log(`Saved ${item.Name}`);
+  try {
+    // Read the JSON file
+    const data = fs.readFileSync(cultureFile, 'utf-8');
+    const json = JSON.parse(data);
+
+    // Save it to Redis as a single key
+    await redis.set('culture', JSON.stringify(json));
+
+    console.log('✅ Successfully seeded Upstash Redis!');
+  } catch (err) {
+    console.error('❌ Failed to seed Redis:', err);
   }
-  console.log('All items saved to Redis!');
 }
 
+// Run the seeding
 seed();
