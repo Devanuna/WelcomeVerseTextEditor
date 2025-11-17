@@ -53,11 +53,9 @@
       const count = changed.size;
       const baseMsg = count ? `${count} өөрчлөлт` : 'Өөрчлөлтгүй';
       statusMessage.textContent = msg || baseMsg;
-
       statusBar.className = 'header-top';
       if (count > 0) statusBar.classList.add('has-changes');
       if (type) statusBar.classList.add(type);
-
       saveBtn.disabled = count === 0;
     };
 
@@ -78,11 +76,7 @@
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         tbody.innerHTML = '';
-
-        // If Redis is empty, return empty array
-        const entries = Array.isArray(data) ? data : [];
-
-        entries.forEach(item => {
+        data.forEach(item => {
           const k = item.Name;
           original[k] = { mn: item.mn || '', en: item.en || '' };
           current[k] = { ...original[k] };
@@ -94,7 +88,6 @@
           `;
           tbody.appendChild(tr);
         });
-
         document.querySelectorAll('.text-cell').forEach(el => {
           el.addEventListener('input', e => {
             const { key, lang } = e.target.dataset;
@@ -102,45 +95,39 @@
             mark(key, lang, e.target);
           });
         });
-
         updateStatus('Бэлэн', 'success');
       } catch (e) {
         updateStatus(`Error: ${e.message}`, 'error');
       }
     };
 
+    const hashString = async (str) => {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    };
+
     const save = async () => {
       if(!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
-
       saveBtn.disabled = true;
       overlay.classList.add('active');
       document.getElementById('loadingText').textContent = 'Шинэчилж байна…';
-
       try {
-        const payload = Object.keys(current).map(k => ({
-          Name: k,
-          mn: current[k].mn,
-          en: current[k].en
-        }));
+        const payload = Object.keys(current).map(k=>({Name:k,mn:current[k].mn,en:current[k].en}));
+        const contentStr = JSON.stringify(payload,null,2);
+        const hash = await hashString(contentStr);
 
-        const res = await fetch('/api/updateText', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: JSON.stringify(payload, null, 2), changesCount: changed.size })
+        const res = await fetch('/api/updateText',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ content: contentStr, hash, changesCount: changed.size })
         });
-
         if(!res.ok) throw new Error((await res.json()).message || 'Failed');
 
-        document.getElementById('loadingText').textContent = 'Амжилттай!';
-        await new Promise(r => setTimeout(r, 1000));
-
-        // Update local state
         Object.assign(original, JSON.parse(JSON.stringify(current)));
         changed.clear();
-        document.querySelectorAll('.text-cell.changed').forEach(el => el.classList.remove('changed'));
+        document.querySelectorAll('.text-cell.changed').forEach(el=>el.classList.remove('changed'));
         updateStatus('Амжилттай хадгаллаа!', 'success');
-
-      } catch(e) {
+      } catch(e){
         updateStatus(`Error: ${e.message}`, 'error');
       } finally {
         overlay.classList.remove('active');

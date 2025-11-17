@@ -2,30 +2,28 @@ import { Redis } from '@upstash/redis';
 
 const redis = Redis.fromEnv();
 
-export default async function handler(req, res) {
-  if (req.method === 'GET') {
-    try {
-      const data = await redis.get('culture');
-      res.status(200).json(data || []);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  } else if (req.method === 'POST') {
-    try {
-      const body = await new Promise((resolve) => {
-        let data = '';
-        req.on('data', chunk => data += chunk);
-        req.on('end', () => resolve(JSON.parse(data)));
-      });
+export async function POST(req) {
+  try {
+    const body = await req.json();
+    const { content, hash } = body;
+    if (!content || !hash) return new Response(JSON.stringify({ message:'Missing content or hash' }), { status:400 });
 
-      if (!body.content) throw new Error('No content provided');
+    // Save JSON + hash in Redis
+    await redis.set('CultureJSON', content);
+    await redis.set('CultureHash', hash);
 
-      await redis.set('culture', JSON.parse(body.content));
-      res.status(200).json({ success: true });
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-    }
-  } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    return new Response(JSON.stringify({ message:'Saved successfully', hash }), { status:200 });
+  } catch(e) {
+    return new Response(JSON.stringify({ message: e.message }), { status:500 });
+  }
+}
+
+export async function GET() {
+  try {
+    const content = await redis.get('CultureJSON');
+    const hash = await redis.get('CultureHash');
+    return new Response(JSON.stringify({ content, hash }), { status:200 });
+  } catch(e) {
+    return new Response(JSON.stringify({ message:e.message }), { status:500 });
   }
 }
