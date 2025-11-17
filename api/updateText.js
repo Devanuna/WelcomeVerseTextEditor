@@ -1,16 +1,21 @@
 // /api/updateText.js
 import { Redis } from '@upstash/redis';
 
-const redis = Redis.fromEnv(); // uses REDIS_URL and REDIS_TOKEN automatically
+const redis = Redis.fromEnv();
 
 export default async function handler(req, res) {
   try {
+    if (req.method === 'GET') {
+      const data = await redis.get('CultureJSON');
+      return res.status(200).json(data ? JSON.parse(data) : []);
+    }
+
     if (req.method === 'POST') {
       const { content, changesCount } = req.body;
+
       if (!content) throw new Error('Missing content');
 
-      // Save JSON to Redis
-      await redis.set("CultureJSON", content);
+      await redis.set('CultureJSON', content);
 
       return res.status(200).json({
         message: `Амжилттай шинэчиллээ! ${changesCount || 0} өөрчлөлт`,
@@ -18,16 +23,9 @@ export default async function handler(req, res) {
       });
     }
 
-    if (req.method === 'GET') {
-      const data = await redis.get("CultureJSON");
-      // Return empty array if Redis is empty
-      return res.status(200).json(data ? JSON.parse(data) : []);
-    }
-
     return res.status(405).json({ message: 'Method not allowed' });
-
-  } catch (err) {
-    console.error('Redis API error:', err.message);
-    return res.status(500).json({ message: err.message });
+  } catch (e) {
+    console.error('updateText error:', e);
+    return res.status(500).json({ message: e.message });
   }
 }
