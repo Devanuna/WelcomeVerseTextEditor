@@ -64,28 +64,33 @@
     const mark = (key, lang, el) => {
       const id = `${key}-${lang}`;
       if (original[key][lang] !== current[key][lang]) {
-        changed.add(id); el.classList.add('changed');
+        changed.add(id); 
+        el.classList.add('changed');
       } else {
-        changed.delete(id); el.classList.remove('changed');
+        changed.delete(id);
+        el.classList.remove('changed');
       }
       updateStatus();
     };
 
     const load = async () => {
       updateStatus('Loading JSON...', 'loading');
+
       try {
         const res = await fetch(JSON_URL, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+
+        const response = await res.json();   // NEW
         tbody.innerHTML = '';
 
-        // If Redis is empty, return empty array
-        const entries = Array.isArray(data) ? data : [];
+        // NEW: JSON now comes inside response.data
+        const entries = Array.isArray(response.data) ? response.data : [];
 
         entries.forEach(item => {
           const k = item.Name;
           original[k] = { mn: item.mn || '', en: item.en || '' };
           current[k] = { ...original[k] };
+
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td class="key">${k}</td>
@@ -104,6 +109,7 @@
         });
 
         updateStatus('Бэлэн', 'success');
+
       } catch (e) {
         updateStatus(`Error: ${e.message}`, 'error');
       }
@@ -126,7 +132,10 @@
         const res = await fetch('/api/updateText', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: JSON.stringify(payload, null, 2), changesCount: changed.size })
+          body: JSON.stringify({
+            content: JSON.stringify(payload, null, 2),
+            changesCount: changed.size
+          })
         });
 
         if(!res.ok) throw new Error((await res.json()).message || 'Failed');
@@ -134,7 +143,6 @@
         document.getElementById('loadingText').textContent = 'Амжилттай!';
         await new Promise(r => setTimeout(r, 1000));
 
-        // Update local state
         Object.assign(original, JSON.parse(JSON.stringify(current)));
         changed.clear();
         document.querySelectorAll('.text-cell.changed').forEach(el => el.classList.remove('changed'));
