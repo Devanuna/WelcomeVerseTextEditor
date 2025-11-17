@@ -77,6 +77,17 @@
       updateStatus();
     };
 
+    // Simple hash function for Unreal to check changes
+    const generateHash = (obj) => {
+      const str = JSON.stringify(obj);
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+      }
+      return hash.toString();
+    };
+
     const load = async () => {
       updateStatus('Loading JSON...', 'loading');
       try {
@@ -85,7 +96,6 @@
         const data = await res.json();
         tbody.innerHTML = '';
 
-        // If Redis is empty, return empty array
         const entries = Array.isArray(data) ? data : [];
 
         entries.forEach(item => {
@@ -129,10 +139,12 @@
           en: current[k].en
         }));
 
+        const hash = generateHash(payload);
+
         const res = await fetch('/api/updateText', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: JSON.stringify(payload, null, 2), changesCount: changed.size })
+          body: JSON.stringify({ content: JSON.stringify(payload, null, 2), hash })
         });
 
         if (!res.ok) throw new Error((await res.json()).message || 'Failed');
@@ -140,7 +152,6 @@
         document.getElementById('loadingText').textContent = 'Амжилттай!';
         await new Promise(r => setTimeout(r, 1000));
 
-        // Update local state
         Object.assign(original, JSON.parse(JSON.stringify(current)));
         changed.clear();
         document.querySelectorAll('.text-cell.changed').forEach(el => el.classList.remove('changed'));
