@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WelcomeVerse Text Editor</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-
 <body>
 
   <!-- Loading Overlay -->
@@ -34,11 +32,7 @@
   <div class="container">
     <table id="table">
       <thead>
-        <tr>
-          <th>Key</th>
-          <th>Монгол</th>
-          <th>English</th>
-        </tr>
+        <tr><th>Key</th><th>Монгол</th><th>English</th></tr>
       </thead>
       <tbody></tbody>
     </table>
@@ -77,17 +71,6 @@
       updateStatus();
     };
 
-    // Simple hash function for Unreal to check changes
-    const generateHash = (obj) => {
-      const str = JSON.stringify(obj);
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        hash = ((hash << 5) - hash) + str.charCodeAt(i);
-        hash |= 0; // Convert to 32bit integer
-      }
-      return hash.toString();
-    };
-
     const load = async () => {
       updateStatus('Loading JSON...', 'loading');
       try {
@@ -96,6 +79,7 @@
         const data = await res.json();
         tbody.innerHTML = '';
 
+        // If Redis is empty, return empty array
         const entries = Array.isArray(data) ? data : [];
 
         entries.forEach(item => {
@@ -126,7 +110,7 @@
     };
 
     const save = async () => {
-      if (!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
+      if(!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
 
       saveBtn.disabled = true;
       overlay.classList.add('active');
@@ -139,25 +123,24 @@
           en: current[k].en
         }));
 
-        const hash = generateHash(payload);
-
         const res = await fetch('/api/updateText', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: JSON.stringify(payload, null, 2), hash })
+          body: JSON.stringify({ content: JSON.stringify(payload, null, 2), changesCount: changed.size })
         });
 
-        if (!res.ok) throw new Error((await res.json()).message || 'Failed');
+        if(!res.ok) throw new Error((await res.json()).message || 'Failed');
 
         document.getElementById('loadingText').textContent = 'Амжилттай!';
         await new Promise(r => setTimeout(r, 1000));
 
+        // Update local state
         Object.assign(original, JSON.parse(JSON.stringify(current)));
         changed.clear();
         document.querySelectorAll('.text-cell.changed').forEach(el => el.classList.remove('changed'));
         updateStatus('Амжилттай хадгаллаа!', 'success');
 
-      } catch (e) {
+      } catch(e) {
         updateStatus(`Error: ${e.message}`, 'error');
       } finally {
         overlay.classList.remove('active');
@@ -169,5 +152,4 @@
     load();
   </script>
 </body>
-
 </html>
