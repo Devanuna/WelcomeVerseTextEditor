@@ -1,31 +1,29 @@
-// /api/updateText.js
 import { Redis } from '@upstash/redis';
+import { NextResponse } from 'next/server';
 
+// Initialize Redis from environment variables
 const redis = Redis.fromEnv();
 
-export default async function handler(req, res) {
+export const GET = async () => {
   try {
-    if (req.method === 'GET') {
-      const data = await redis.get('CultureJSON');
-      return res.status(200).json(data ? JSON.parse(data) : []);
-    }
-
-    if (req.method === 'POST') {
-      const { content, changesCount } = req.body;
-
-      if (!content) throw new Error('Missing content');
-
-      await redis.set('CultureJSON', content);
-
-      return res.status(200).json({
-        message: `Амжилттай шинэчиллээ! ${changesCount || 0} өөрчлөлт`,
-        changesApplied: changesCount || 0
-      });
-    }
-
-    return res.status(405).json({ message: 'Method not allowed' });
-  } catch (e) {
-    console.error('updateText error:', e);
-    return res.status(500).json({ message: e.message });
+    const data = await redis.get('culture');
+    return NextResponse.json(data || []);
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
-}
+};
+
+export const POST = async (req) => {
+  try {
+    const body = await req.json();
+    const content = body.content; // JSON string from frontend
+
+    if (!content) throw new Error('No content provided');
+
+    await redis.set('culture', JSON.parse(content));
+
+    return NextResponse.json({ success: true });
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+};
