@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WelcomeVerse Text Editor</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
+
 <body>
 
   <!-- Loading Overlay -->
@@ -32,7 +34,11 @@
   <div class="container">
     <table id="table">
       <thead>
-        <tr><th>Key</th><th>Монгол</th><th>English</th></tr>
+        <tr>
+          <th>Key</th>
+          <th>Монгол</th>
+          <th>English</th>
+        </tr>
       </thead>
       <tbody></tbody>
     </table>
@@ -64,7 +70,7 @@
     const mark = (key, lang, el) => {
       const id = `${key}-${lang}`;
       if (original[key][lang] !== current[key][lang]) {
-        changed.add(id); 
+        changed.add(id);
         el.classList.add('changed');
       } else {
         changed.delete(id);
@@ -116,7 +122,7 @@
     };
 
     const save = async () => {
-      if(!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
+      if (!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
 
       saveBtn.disabled = true;
       overlay.classList.add('active');
@@ -138,7 +144,7 @@
           })
         });
 
-        if(!res.ok) throw new Error((await res.json()).message || 'Failed');
+        if (!res.ok) throw new Error((await res.json()).message || 'Failed');
 
         document.getElementById('loadingText').textContent = 'Амжилттай!';
         await new Promise(r => setTimeout(r, 1000));
@@ -148,7 +154,7 @@
         document.querySelectorAll('.text-cell.changed').forEach(el => el.classList.remove('changed'));
         updateStatus('Амжилттай хадгаллаа!', 'success');
 
-      } catch(e) {
+      } catch (e) {
         updateStatus(`Error: ${e.message}`, 'error');
       } finally {
         overlay.classList.remove('active');
@@ -160,4 +166,5 @@
     load();
   </script>
 </body>
+
 </html>
