@@ -1,17 +1,19 @@
-// seedRedis.js
 import { Redis } from '@upstash/redis';
 import fs from 'fs';
 
+// Initialize Redis from your environment variable
 const redis = Redis.fromEnv();
 
+// Read your culture.json
+const data = JSON.parse(fs.readFileSync('./culture.json', 'utf-8'));
+
+// Push each entry into Redis
 async function seed() {
-  try {
-    const content = fs.readFileSync('./Culture.json', 'utf-8'); // make sure path is correct
-    await redis.set('CultureJSON', content);
-    console.log('Redis seeded successfully!');
-  } catch (e) {
-    console.error('Error seeding Redis:', e);
+  for (const item of data) {
+    await redis.set(item.Name, JSON.stringify(item));
+    console.log(`Saved ${item.Name}`);
   }
+  console.log('All items saved to Redis!');
 }
 
 seed();
