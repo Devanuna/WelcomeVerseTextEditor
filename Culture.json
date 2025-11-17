@@ -1,0 +1,552 @@
+[
+  {
+    "Name": "Button_Back2MenuLvl",
+    "mn": "Үеүүдрүү буцах",
+    "en": "Back to Main"
+  },
+  {
+    "Name": "Button_ChangeLanguage",
+    "mn": "English",
+    "en": "Монгол"
+  },
+  {
+    "Name": "Button_Check",
+    "mn": "Шалгах",
+    "en": "Check"
+  },
+  {
+    "Name": "Button_LeaderBoard",
+    "mn": "Цагын Самбар",
+    "en": "Leaderboard"
+  },
+  {
+    "Name": "Button_QuitGame",
+    "mn": "Гарах",
+    "en": "Quit Game"
+  },
+  {
+    "Name": "Button_RestartCurrentLvl",
+    "mn": "Дахин Эхлэх",
+    "en": "Restart"
+  },
+  {
+    "Name": "Button_Save",
+    "mn": "Хадгалах",
+    "en": "Save"
+  },
+  {
+    "Name": "Button_ScalabilitySettings",
+    "mn": "График тохиргоо",
+    "en": "Scalibility"
+  },
+  {
+    "Name": "Info_ChangeHDRI",
+    "mn": "Орчин Солих",
+    "en": "Change Environment"
+  },
+  {
+    "Name": "Info_Ddish_0",
+    "mn": "Тавган антеныг эргүүлэн зөв байрлалд оруулаарай. (Grip)",
+    "en": "Adjust Satellite Orientation (Grip)"
+  },
+  {
+    "Name": "Info_Ddish_Last",
+    "mn": "Хиймэл дагуулын дохиог хүлээн авлаа",
+    "en": "Signal Received"
+  },
+  {
+    "Name": "Info_FixPosition",
+    "mn": "Байршил Засах",
+    "en": "Re-Arrange Position"
+  },
+  {
+    "Name": "Info_Grip",
+    "mn": "Атгах",
+    "en": "Grab"
+  },
+  {
+    "Name": "Info_Hand_A",
+    "mn": "A товчийг дарна уу",
+    "en": "Click A Button"
+  },
+  {
+    "Name": "Info_Hand_A_after",
+    "mn": "А - Удирдлагын тайлбар харуулах, нуух",
+    "en": "A - toggle Info"
+  },
+  {
+    "Name": "Info_Hand_Grip",
+    "mn": "Grip - Эд зүйлсийг барих, атгах",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_GripLeft",
+    "mn": "Зүүн-grip товчийг дарна уу",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_GripRight",
+    "mn": "Дүрс рүү баруун гарыг ойртуулж grip товчийг дарна уу",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_Last",
+    "mn": "Заавар дууслаа. Таньд Баяр хүргэе",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_Menu",
+    "mn": "Зүүн-Menu товчийг дарна уу",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_Menu_after",
+    "mn": "Menu товч нь тоглоомийн menu гаргаж ирэх/алга болгох үүрэгтэй.",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_ThumbLeft",
+    "mn": "Зүүн-thumbstick товчийг баруун эсвэл зүүн тийш түлхэнэ үү",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_ThumbLeft_after",
+    "mn": "Зүүн thumbstick - Бодит ертөнц, харанхуй ертөнц, виртуал ертөнцүүдийн хооронд шилжих",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_ThumbRight",
+    "mn": "Баруун-thumbstick товчийг баруун эсвэл зүүн тийш түлхэнэ үү",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_ThumbRight_after",
+    "mn": "Баруун thumbstick - Дууг нэмэх, хасах",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_Trigger",
+    "mn": "Click - Сонгох, дарах үйлдэл хийх",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_TriggerLeft",
+    "mn": "Дүрсрүү удирдлагаа чиглүүлэн Зүүн-click товчийг дарна уу",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_TriggerRight",
+    "mn": "Баруун-click товчийг дарна уу",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_Y",
+    "mn": "Y товчийг дарна уу",
+    "en": ""
+  },
+  {
+    "Name": "Info_Hand_Y_after",
+    "mn": "Y товчийг дарснаар та байрлал болон эргэлтээ засна.",
+    "en": ""
+  },
+  {
+    "Name": "Info_LeftGrip",
+    "mn": "(Зүүн grip)",
+    "en": "((Left Grip Button))"
+  },
+  {
+    "Name": "Info_LeftMenu",
+    "mn": "(Зүүн Цэс)",
+    "en": "(Left Menu)"
+  },
+  {
+    "Name": "Info_LeftThumbstick",
+    "mn": "(Зүүн thumbstick)",
+    "en": "(Left thumbstick)"
+  },
+  {
+    "Name": "Info_LeftTrigger",
+    "mn": "(Зүүн click)",
+    "en": "(Left Trigger Button)"
+  },
+  {
+    "Name": "Info_LeftY",
+    "mn": "(Зүүн Y)",
+    "en": "(Left Y Button)"
+  },
+  {
+    "Name": "Info_MetaMenu",
+    "mn": "Түр Зогсох",
+    "en": "Pause"
+  },
+  {
+    "Name": "Info_NewMission",
+    "mn": "Шинэ даалгавар! →",
+    "en": "New Mission! ->"
+  },
+  {
+    "Name": "Info_Nomadia_0",
+    "mn": "Проекторын бариулаас атгаад эргүүлээрэй. (Grip)",
+    "en": ""
+  },
+  {
+    "Name": "Info_PaintMission_0",
+    "mn": "Дүрсийг будаж, лого бүтээгээрэй.(Grip + Click)",
+    "en": ""
+  },
+  {
+    "Name": "Info_PaintMission_1",
+    "mn": "Дүрсийг ойроос будаарай",
+    "en": ""
+  },
+  {
+    "Name": "Info_PaintMission_2",
+    "mn": "Будагдсан",
+    "en": "Painted"
+  },
+  {
+    "Name": "Info_PaintMission_Green",
+    "mn": "Ногоон өнгийг гүйцээж будаарай",
+    "en": ""
+  },
+  {
+    "Name": "Info_PaintMission_Last",
+    "mn": "Та эхний даалгаврыг амжилттай биелүүлэн Юнителд өнгө нэмлээ",
+    "en": ""
+  },
+  {
+    "Name": "Info_PaintMission_Last_Green",
+    "mn": "Ногоон өнгө амжилттай будагдлаа",
+    "en": ""
+  },
+  {
+    "Name": "Info_PaintMission_Last_White",
+    "mn": "Цагаан өнгө амжилттай будагдлаа",
+    "en": ""
+  },
+  {
+    "Name": "Info_PaintMission_White",
+    "mn": "Цагаан өнгийг гүйцээж будаарай",
+    "en": ""
+  },
+  {
+    "Name": "Info_PSN_Media",
+    "mn": "Хөтөлбөр :",
+    "en": ""
+  },
+  {
+    "Name": "Info_PSN_ThrowBall_0",
+    "mn": "Бөмбөг атгана уу (Grip)",
+    "en": ""
+  },
+  {
+    "Name": "Info_PSN_ThrowBall_1",
+    "mn": "Замын дагуу чиглүүлэн шидэлт хийгээрэй. (Release Grip)",
+    "en": ""
+  },
+  {
+    "Name": "Info_RightA",
+    "mn": "(Баруун A)",
+    "en": "(Right A button)"
+  },
+  {
+    "Name": "Info_RightGrip",
+    "mn": "(Баруун grip)",
+    "en": "(Right Grip Button)"
+  },
+  {
+    "Name": "Info_RightMenu",
+    "mn": "(Баруун Цэс)",
+    "en": "(Right Meta Menu)"
+  },
+  {
+    "Name": "Info_RightThumbstick",
+    "mn": "(Баруун thumbstick)",
+    "en": "(Right thumbstick)"
+  },
+  {
+    "Name": "Info_RightTrigger",
+    "mn": "(Баруун click)",
+    "en": "(Right Trigger Button)"
+  },
+  {
+    "Name": "Info_RotatingDirection",
+    "mn": "Зөв байршлаа",
+    "en": ""
+  },
+  {
+    "Name": "Info_RotatingDirection_D",
+    "mn": "Доош ↓ эргүүлээрэй",
+    "en": ""
+  },
+  {
+    "Name": "Info_RotatingDirection_L",
+    "mn": "Зүүн ← эргүүлээрэй",
+    "en": ""
+  },
+  {
+    "Name": "Info_RotatingDirection_LD",
+    "mn": "Зүүн Доош ↙ эргүүлээрэй",
+    "en": ""
+  },
+  {
+    "Name": "Info_RotatingDirection_LU",
+    "mn": "Зүүн Дээш ↖ эргүүлээрэй",
+    "en": ""
+  },
+  {
+    "Name": "Info_RotatingDirection_R",
+    "mn": "Баруун → эргүүлээрэй",
+    "en": ""
+  },
+  {
+    "Name": "Info_RotatingDirection_RD",
+    "mn": "Баруун Доош ↘ эргүүлээрэй",
+    "en": ""
+  },
+  {
+    "Name": "Info_RotatingDirection_RU",
+    "mn": "Баруун Дээш ↗ эргүүлээрэй",
+    "en": ""
+  },
+  {
+    "Name": "Info_RotatingDirection_U",
+    "mn": "Дээш ↑ эргүүлээрэй",
+    "en": ""
+  },
+  {
+    "Name": "Info_ShowInfo",
+    "mn": "Тайлбар",
+    "en": "Show Info"
+  },
+  {
+    "Name": "Info_Trigger",
+    "mn": "Сонгох",
+    "en": "Click"
+  },
+  {
+    "Name": "Info_UnitelMenu",
+    "mn": "Юнител Цэс",
+    "en": "Unitel Menu"
+  },
+  {
+    "Name": "Info_UnivisionTV_0",
+    "mn": "Удирлагыг атгана уу (Grip)",
+    "en": "Grab the TV Controller (Grip)"
+  },
+  {
+    "Name": "Info_UnivisionTV_1",
+    "mn": "Зурагтыг асаагаарай (Click)",
+    "en": "Turn on the TV (Click)"
+  },
+  {
+    "Name": "Info_Upoint_0",
+    "mn": "Дүрсийг эргүүлнэ үү (Grip)",
+    "en": ""
+  },
+  {
+    "Name": "Info_Upoint_Last",
+    "mn": "Амжилттай байрлууллаа",
+    "en": ""
+  },
+  {
+    "Name": "Info_Volume",
+    "mn": "Дуу",
+    "en": "Volume"
+  },
+  {
+    "Name": "InfoText_Ceo_Name",
+    "mn": "Д. ЖАМЪНШАРАВ",
+    "en": ""
+  },
+  {
+    "Name": "InfoText_Ceo_Title",
+    "mn": "Юнител группийн Гүйцэтгэх захирал",
+    "en": ""
+  },
+  {
+    "Name": "InfoText_UnitelMission_0",
+    "mn": "5G сүлжээний цамхаг угсарцгаая (Grip)",
+    "en": ""
+  },
+  {
+    "Name": "InfoText_UnitelMission_1",
+    "mn": "Суурь нийллээ",
+    "en": ""
+  },
+  {
+    "Name": "InfoText_UnitelMission_2",
+    "mn": "Жижиг суурь, их бие 2 нийллээ",
+    "en": ""
+  },
+  {
+    "Name": "InfoText_UnitelMission_3",
+    "mn": "Их бие, дээд давхар 2 нийллээ",
+    "en": ""
+  },
+  {
+    "Name": "InfoText_UnitelMission_4",
+    "mn": "Дээд давхар, дээвэр 2 нийллээ",
+    "en": ""
+  },
+  {
+    "Name": "InfoText_UnitelMission_Last",
+    "mn": "5G сүлжээ орон даяар нэвтэрлээ",
+    "en": ""
+  },
+  {
+    "Name": "Menu",
+    "mn": "Цэс",
+    "en": "Menu"
+  },
+  {
+    "Name": "Mission_CeoCall",
+    "mn": "Захиралын дуудлага хүлээн авах даалгавар",
+    "en": ""
+  },
+  {
+    "Name": "Mission_ControllerTutorial",
+    "mn": "Удирдлагын заавар",
+    "en": ""
+  },
+  {
+    "Name": "Mission_Ddish_RotateObject",
+    "mn": "Ddish - таваг эргүүлж дохио хүлээн авах даалгавар",
+    "en": ""
+  },
+  {
+    "Name": "Mission_Nomadia_RotateWheel",
+    "mn": "Nomadia - прожектор асаах даалгавар",
+    "en": "Nomadia - Mission to turn on old projector"
+  },
+  {
+    "Name": "Mission_PaintUnitelLogo",
+    "mn": "Юнител Лого будах даалгавар",
+    "en": ""
+  },
+  {
+    "Name": "Mission_PSN_Basketball",
+    "mn": "PSN - Бөмбөг шидэж Гоал оруулах даалгавар",
+    "en": ""
+  },
+  {
+    "Name": "Mission_Unitel_Tsamhag",
+    "mn": "Unitel - Цамхаг угсрах даалгавар",
+    "en": ""
+  },
+  {
+    "Name": "Mission_Univision_TurnOnTV",
+    "mn": "Univision - зурагт асаах даалгавар",
+    "en": "Univision - Mission to turn on TV"
+  },
+  {
+    "Name": "Mission_Upoint_RotateObject",
+    "mn": "Upoint - дүрс эргүүлж Лого бүтээх даалгавар",
+    "en": ""
+  },
+  {
+    "Name": "Quality",
+    "mn": "Чанар",
+    "en": "Quality"
+  },
+  {
+    "Name": "Scalability_Cinematic",
+    "mn": "Cinematic",
+    "en": "Cinematic"
+  },
+  {
+    "Name": "Scalability_Epic",
+    "mn": "Epic",
+    "en": "Epic"
+  },
+  {
+    "Name": "Scalability_Far",
+    "mn": "Хол",
+    "en": "Far"
+  },
+  {
+    "Name": "Scalability_High",
+    "mn": "Их",
+    "en": "High"
+  },
+  {
+    "Name": "Scalability_Low",
+    "mn": "Бага",
+    "en": "Low"
+  },
+  {
+    "Name": "Scalability_Medium",
+    "mn": "Дунд",
+    "en": "Medium"
+  },
+  {
+    "Name": "Scalability_Near",
+    "mn": "Ойр",
+    "en": "Near"
+  },
+  {
+    "Name": "Text_Ambient",
+    "mn": "ОРЧИН",
+    "en": "AMBIENT"
+  },
+  {
+    "Name": "Text_Audio",
+    "mn": "АУДИО",
+    "en": "AUDIO"
+  },
+  {
+    "Name": "Text_SFX",
+    "mn": "ЭФФЕКТ",
+    "en": "SFX"
+  },
+  {
+    "Name": "Text_Voice",
+    "mn": "ХӨГЖИМ",
+    "en": "VOICE"
+  },
+  {
+    "Name": "TotorialText_ClickMission",
+    "mn": "Энд чиглүүл",
+    "en": "Point Here"
+  },
+  {
+    "Name": "TutorialText_Headline_0",
+    "mn": "ВИРТУАЛ ЕРТӨНЦӨД ТАВТАЙ МОРИЛ",
+    "en": "WELCOME TO VIRTUAL WORLD"
+  },
+  {
+    "Name": "TutorialText_Headline_1",
+    "mn": "УДИРДЛАГЫН ЗААВРЫГ ЭХЛҮҮЛЬЕ",
+    "en": "LET'S BEGIN CONTROLLER TUTORIAL"
+  },
+  {
+    "Name": "TutorialText_Headline_Last",
+    "mn": "УДИРДЛАГЫН ЗААВАР ДУУСЛАА",
+    "en": "COMPLETED CONTROLLER TUTORIAL"
+  },
+  {
+    "Name": "TutorialText_Headline_Unitel",
+    "mn": "Hi, Uniteler!",
+    "en": "Hi, Uniteler!"
+  },
+  {
+    "Name": "TutorialText_Tutorial",
+    "mn": "→ VR УДИРДЛАГЫН ЗААВАР",
+    "en": "→ VR CONTROLLER TUTORIAL"
+  },
+  {
+    "Name": "TutorialText_TutorialInfo",
+    "mn": "Зүүн гарын дурын товчийг дараарай",
+    "en": ""
+  },
+  {
+    "Name": "TutorialText_Unitel",
+    "mn": "→ ЮНИТЕЛ ТАНИЛЦУУЛГА",
+    "en": "→ UNITEL CORPORATION"
+  },
+  {
+    "Name": "TutorialText_UnitelInfo",
+    "mn": "Баруун гарын дурын товч дараарай",
+    "en": ""
+  }
+]
