@@ -1,17 +1,17 @@
-import { Redis } from '@upstash/redis';
+// CommonJS version
+const { Redis } = require('@upstash/redis');
 
 const redis = new Redis({
   url: process.env.REDIS_URL,
   token: process.env.REDIS_TOKEN,
 });
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method === 'POST') {
     try {
       const { content, changesCount } = req.body;
       if (!content) throw new Error('Missing content');
 
-      // Save JSON to Redis
       await redis.set('CultureJSON', content);
 
       res.status(200).json({
@@ -25,12 +25,11 @@ export default async function handler(req, res) {
   } else if (req.method === 'GET') {
     try {
       const data = await redis.get('CultureJSON');
-      if (!data) throw new Error('No data found');
-      res.status(200).json(JSON.parse(data));
+      res.status(200).json(data ? JSON.parse(data) : []);
     } catch (e) {
       res.status(500).json({ message: e.message });
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }
-}
+};
