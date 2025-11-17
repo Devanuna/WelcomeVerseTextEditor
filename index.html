@@ -32,11 +32,7 @@
   <div class="container">
     <table id="table">
       <thead>
-        <tr>
-          <th>Key</th>
-          <th>Монгол</th>
-          <th>English</th>
-        </tr>
+        <tr><th>Key</th><th>Монгол</th><th>English</th></tr>
       </thead>
       <tbody></tbody>
     </table>
@@ -57,9 +53,11 @@
       const count = changed.size;
       const baseMsg = count ? `${count} өөрчлөлт` : 'Өөрчлөлтгүй';
       statusMessage.textContent = msg || baseMsg;
+
       statusBar.className = 'header-top';
       if (count > 0) statusBar.classList.add('has-changes');
       if (type) statusBar.classList.add(type);
+
       saveBtn.disabled = count === 0;
     };
 
@@ -73,29 +71,37 @@
       updateStatus();
     };
 
+    // Simple hash function for Unreal to check changes
+    const generateHash = (obj) => {
+      const str = JSON.stringify(obj);
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+      }
+      return hash.toString();
+    };
+
     const load = async () => {
       updateStatus('Loading JSON...', 'loading');
       try {
         const res = await fetch(JSON_URL, { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        // Get response text and parse JSON
-        const text = await res.text();
-        const data = JSON.parse(text);  // <-- ensure we have an array
-
-        if (!Array.isArray(data)) throw new Error('Unexpected data format');
-
+        const data = await res.json();
         tbody.innerHTML = '';
-        data.forEach(item => {
+
+        const entries = Array.isArray(data) ? data : [];
+
+        entries.forEach(item => {
           const k = item.Name;
           original[k] = { mn: item.mn || '', en: item.en || '' };
           current[k] = { ...original[k] };
           const tr = document.createElement('tr');
           tr.innerHTML = `
-        <td class="key">${k}</td>
-        <td><div class="text-cell" contenteditable data-key="${k}" data-lang="mn">${current[k].mn}</div></td>
-        <td><div class="text-cell" contenteditable data-key="${k}" data-lang="en">${current[k].en}</div></td>
-      `;
+            <td class="key">${k}</td>
+            <td><div class="text-cell" contenteditable data-key="${k}" data-lang="mn">${current[k].mn}</div></td>
+            <td><div class="text-cell" contenteditable data-key="${k}" data-lang="en">${current[k].en}</div></td>
+          `;
           tbody.appendChild(tr);
         });
 
@@ -113,34 +119,39 @@
       }
     };
 
-
-    const hashString = async (str) => {
-      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-    };
-
     const save = async () => {
-      if (!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
+      if(!changed.size) return updateStatus('Өөрчлөлтгүй', 'info');
+
       saveBtn.disabled = true;
       overlay.classList.add('active');
       document.getElementById('loadingText').textContent = 'Шинэчилж байна…';
+
       try {
-        const payload = Object.keys(current).map(k => ({ Name: k, mn: current[k].mn, en: current[k].en }));
-        const contentStr = JSON.stringify(payload, null, 2);
-        const hash = await hashString(contentStr);
+        const payload = Object.keys(current).map(k => ({
+          Name: k,
+          mn: current[k].mn,
+          en: current[k].en
+        }));
+
+        const hash = generateHash(payload);
 
         const res = await fetch('/api/updateText', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content: contentStr, hash, changesCount: changed.size })
+          body: JSON.stringify({ content: JSON.stringify(payload, null, 2), hash })
         });
-        if (!res.ok) throw new Error((await res.json()).message || 'Failed');
+
+        if(!res.ok) throw new Error((await res.json()).message || 'Failed');
+
+        document.getElementById('loadingText').textContent = 'Амжилттай!';
+        await new Promise(r => setTimeout(r, 1000));
 
         Object.assign(original, JSON.parse(JSON.stringify(current)));
         changed.clear();
         document.querySelectorAll('.text-cell.changed').forEach(el => el.classList.remove('changed'));
         updateStatus('Амжилттай хадгаллаа!', 'success');
-      } catch (e) {
+
+      } catch(e) {
         updateStatus(`Error: ${e.message}`, 'error');
       } finally {
         overlay.classList.remove('active');
@@ -152,5 +163,4 @@
     load();
   </script>
 </body>
-
 </html>

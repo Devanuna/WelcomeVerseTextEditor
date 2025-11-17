@@ -1,29 +1,41 @@
 import { Redis } from '@upstash/redis';
+import crypto from 'crypto';
 
 const redis = Redis.fromEnv();
 
-export async function POST(req) {
-  try {
-    const body = await req.json();
-    const { content, hash } = body;
-    if (!content || !hash) return new Response(JSON.stringify({ message:'Missing content or hash' }), { status:400 });
+export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    try {
+      const dataStr = await redis.get('culture') || '[]';
+      const hash = await redis.get('culture_hash') || '';
+      const data = JSON.parse(dataStr);
+      res.status(200).json({ data, hash });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  } else if (req.method === 'POST') {
+    try {
+      const body = await new Promise((resolve) => {
+        let data = '';
+        req.on('data', chunk => data += chunk);
+        req.on('end', () => resolve(JSON.parse(data)));
+      });
 
-    // Save JSON + hash in Redis
-    await redis.set('CultureJSON', content);
-    await redis.set('CultureHash', hash);
+      if (!body.content) throw new Error('No content provided');
 
-    return new Response(JSON.stringify({ message:'Saved successfully', hash }), { status:200 });
-  } catch(e) {
-    return new Response(JSON.stringify({ message: e.message }), { status:500 });
-  }
-}
+      // Save JSON
+      const contentStr = JSON.stringify(JSON.parse(body.content));
+      await redis.set('culture', contentStr);
 
-export async function GET() {
-  try {
-    const content = await redis.get('CultureJSON');
-    const hash = await redis.get('CultureHash');
-    return new Response(JSON.stringify({ content, hash }), { status:200 });
-  } catch(e) {
-    return new Response(JSON.stringify({ message:e.message }), { status:500 });
+      // Compute hash
+      const hash = crypto.createHash('sha256').update(contentStr).digest('hex');
+      await redis.set('culture_hash', hash);
+
+      res.status(200).json({ success: true, hash });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  } else {
+    res.status(405).json({ error: 'Method not allowed' });
   }
 }
